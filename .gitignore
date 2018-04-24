@@ -99,3 +99,9 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+
+# data files
+map
+*.csv
+taxi_log_2008_by_id/
