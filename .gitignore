@@ -102,6 +102,6 @@ ENV/
 
 
 # data files
-map
+*.xml
 *.csv
 taxi_log_2008_by_id/
