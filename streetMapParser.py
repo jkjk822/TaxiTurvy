@@ -25,11 +25,13 @@ def buildRoadGraph(filename):
 def __linkNodes(root):
 	graph = nx.MultiDiGraph()
 	nodes = __findNodes(root)
+
 	edges = {}
+	noCars = ['footway','cycleway','path']
 	for way in root.findall('way'):
 		highway = False
 		for tag in way.findall('tag'):
-			if tag.get('k')=='highway':
+			if tag.get('k')=='highway' and tag.get('v') not in noCars:
 				highway	= True
 				break
 		if highway:
@@ -62,12 +64,19 @@ def __findNodes(root):
 def __addToGraph(way, nodes, edges, graph):
 	edgeID = way.get('id')
 	edges[edgeID] = {tag.get('k'):tag.get('v') for tag in way.findall('tag')}
-	prev = None
+	prevID = None
 	for node in way.findall('nd'):
 		nodeID = node.get('ref')
 		graph.add_node(nodeID, **nodes[nodeID])
-		if prev:
-			graph.add_edge(prev, nodeID, key=edgeID)
+		if prevID:
+			dist = __distance((nodes[prevID]['lat'],nodes[prevID]['lon']),(nodes[nodeID]['lat'],nodes[nodeID]['lon']))
+			graph.add_edge(prevID, nodeID, key=edgeID, dist=dist)
 			if edges[edgeID].get('oneway', 'no') != 'yes':
-				graph.add_edge(nodeID, prev, key=edgeID)
-		prev = nodeID
+				graph.add_edge(nodeID, prevID, key=edgeID, dist=dist)
+		prevID = nodeID
+
+
+# Distance formula
+
+def __distance(p1, p2):
+	return ((p1[0]-p2[0])**2+(p1[1]-p2[1])**2)**1/2
