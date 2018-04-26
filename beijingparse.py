@@ -39,6 +39,9 @@ coord = np.column_stack((longi,lat))
 trips = np.column_stack((taxiID,coord))
 print(trips)
 
+##############
+# Merge nodes with map data
+
 
 ##############
 # Plot each coordinate as a node in NetworkX, this looks really messy right now and will need to be updated
