@@ -55,6 +55,8 @@ lat = np.array(lat)
 coord = np.column_stack((longi,lat))
 print(coord)
 
+##################
+
 # The rest is work in progress
 
 # Trip matrix (taxiID, longtiude, latitude)
