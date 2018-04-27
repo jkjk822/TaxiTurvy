@@ -87,12 +87,12 @@ def snapToGraph(trips, graph):
 	snappedTrips = {}
 	nodeIDs = np.array([x[0] for x in graph.nodes.data('loc')])
 	NNTree = scipy.spatial.cKDTree(np.array([x[1] for x in graph.nodes.data('loc')]))
-	error = 0
+	maxError = 0
 	for tripID in trips:
 		# find 1 nearest neighbor for each trip point
 		dists, indexes = NNTree.query(trips[tripID], k=1, n_jobs=-1)
-		error += dists.sum()
+		maxError = max(max(dists), maxError)
 		snappedTrips[tripID] = []
 		for i in indexes:
 			snappedTrips[tripID].append(nodeIDs[i])
-	return (snappedTrips, error)
+	return (snappedTrips, maxError)
