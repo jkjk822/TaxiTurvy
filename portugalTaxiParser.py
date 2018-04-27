@@ -17,7 +17,7 @@ def parseTrips(filename):
 			tripID = line.split(",")[0][1:-1] #trim quotes
 			rawTripData = line.split("\",\"")[-1][1:-3] #trim outer brackets
 			if not rawTripData:
-				break
+				continue
 			rawTripData = rawTripData[1:-1] #trim first and last bracket
 			tripData = [(float(pair.split(",")[1]), float(pair.split(",")[0])) for pair in rawTripData.split("],[")]
 			trips[tripID] = tripData
@@ -27,14 +27,15 @@ trips = parseTrips('portoTaxi.csv')
 print("parsed trips")
 graph, edgeTable = buildRoadGraph('portoMap.xml')
 print("graph built")
-trips = snapToGraph(trips, graph)
+trips, error = snapToGraph(trips, graph)
 print("snapped to graph")
-with open("portoSnappedTrips.csv", 'w') as f: # encode for later use
+with open("portoSnappedTrips.json", 'w') as f: # encode for later use
 	f.write(json.dumps(trips, indent=4))
 print("wrote to file")
+print(error)
 
 #Read back in using:
-# with open("portoSnappedTrips.csv", 'r') as f:
+# with open("portoSnappedTrips.json", 'r') as f:
 # 	print(json.loads(f.read()))
 
 

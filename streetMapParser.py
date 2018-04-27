@@ -70,14 +70,14 @@ def __addToGraph(way, nodes, edges, graph):
 		nodeID = node.get('ref')
 		graph.add_node(nodeID, **nodes[nodeID])
 		if prevID:
-			dist = distance(nodes[prevID]['loc'], nodes[nodeID]['loc'])
+			dist = __distance(nodes[prevID]['loc'], nodes[nodeID]['loc'])
 			graph.add_edge(prevID, nodeID, key=edgeID, dist=dist)
 			if edges[edgeID].get('oneway', 'no') != 'yes':
 				graph.add_edge(nodeID, prevID, key=edgeID, dist=dist)
 		prevID = nodeID
 
 
-# Distance formula
+# Distance formula (we should proably use haversine here)
 def __distance(p1, p2):
 	return (p1[0]-p2[0])**2+(p1[1]-p2[1])**2
 
@@ -85,7 +85,7 @@ def __distance(p1, p2):
 # This is super computationally expensive, so watch out
 def snapToGraph(trips, graph):
 	snappedTrips = {}
-	nodeID = np.array([x[0] for x in graph.nodes.data('loc')])
+	nodeIDs = np.array([x[0] for x in graph.nodes.data('loc')])
 	NNTree = scipy.spatial.cKDTree(np.array([x[1] for x in graph.nodes.data('loc')]))
 	error = 0
 	for tripID in trips:
