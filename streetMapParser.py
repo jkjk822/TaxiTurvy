@@ -1,6 +1,7 @@
 from xml.etree import ElementTree as ET
 import networkx as nx
-
+import scipy
+import numpy as np
 
 def buildRoadGraph(filename):
 	return __linkNodes(ET.parse(filename).getroot())
@@ -44,11 +45,11 @@ def __linkNodes(root):
 ##############
 # Each node has the form
 #   <node id="1890707217" lat="39.8583920" lon="116.1331899" version="1" timestamp="2012-08-30T22:40:49Z" changeset="12924496" uid="376715" user="R438"/>
-# and we hash it with `id` as they key and only keeping the `lat` and `lon` attributes
+# and we hash it with `id` as the key and only keeping the `lat` and `lon` attributes
 def __findNodes(root):
 	nodes = {}
 	for node in root.findall('node'):
-		nodes[node.get('id')] = { key: float(node.get(key)) for key in ['lat','lon'] }
+		nodes[node.get('id')] = { "loc": (float(node.get('lat')), float(node.get('lon'))) }
 	return nodes
 
 
@@ -69,7 +70,7 @@ def __addToGraph(way, nodes, edges, graph):
 		nodeID = node.get('ref')
 		graph.add_node(nodeID, **nodes[nodeID])
 		if prevID:
-			dist = __distance((nodes[prevID]['lat'],nodes[prevID]['lon']),(nodes[nodeID]['lat'],nodes[nodeID]['lon']))
+			dist = distance(nodes[prevID]['loc'], nodes[nodeID]['loc'])
 			graph.add_edge(prevID, nodeID, key=edgeID, dist=dist)
 			if edges[edgeID].get('oneway', 'no') != 'yes':
 				graph.add_edge(nodeID, prevID, key=edgeID, dist=dist)
@@ -77,6 +78,21 @@ def __addToGraph(way, nodes, edges, graph):
 
 
 # Distance formula
-
 def __distance(p1, p2):
-	return ((p1[0]-p2[0])**2+(p1[1]-p2[1])**2)**1/2
+	return (p1[0]-p2[0])**2+(p1[1]-p2[1])**2
+
+
+# This is super computationally expensive, so watch out
+def snapToGraph(trips, graph):
+	snappedTrips = {}
+	nodeID = np.array([x[0] for x in graph.nodes.data('loc')])
+	NNTree = scipy.spatial.cKDTree(np.array([x[1] for x in graph.nodes.data('loc')]))
+	error = 0
+	for tripID in trips:
+		# find 1 nearest neighbor for each trip point
+		dists, indexes = NNTree.query(trips[tripID], k=1, n_jobs=-1)
+		error += dists.sum()
+		snappedTrips[tripID] = []
+		for i in indexes:
+			snappedTrips[tripID].append(nodeIDs[i])
+	return (snappedTrips, error)
