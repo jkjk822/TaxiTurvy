@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import json
 from streetMapParser import buildRoadGraph, snapToGraph
+from portugalTaxiParser import parseTrips
 
 
 graph, edgeTable = buildRoadGraph('portoMap.xml')
@@ -31,8 +32,17 @@ for tripID in trips:
 	print(nx.bidirectional_dijkstra(graph, trips[tripID][0], trips[tripID][-1])[1])
 	print()
 
+
+
+#
+# For resnapping
+#
+# trips = parseTrips('portoTaxi.csv')
+# print("parsed")
+# graph, edgeTable = buildRoadGraph('portoMap.xml')
+# print("built")
 # trips, error = snapToGraph(trips, graph)
-# print("snapped to graph")
+# print("snapped")
 # with open("portoSnappedTrips.json", 'w') as f: # encode for later use
 # 	f.write(json.dumps(trips, indent=4))
 # print("wrote to file")
