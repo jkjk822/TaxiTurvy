@@ -8,7 +8,7 @@ def buildRoadGraph(filename):
 	if filename.startswith('port'):
 		# median speeds
 		speeds = {'living_street': 50, 'primary_link': 50, 'primary': 50, 'track': 35, 'unclassified': 50,
-		'tertiary_link': 50, 'residential': 50, 'secondary': 50, 'pedestrian': 50, 'trunk': 120, 'tertiary': 50,
+		'tertiary_link': 50, 'residential': 50, 'secondary': 50, 'trunk': 120, 'tertiary': 50,
 		'service': 30, 'motorway': 100, 'motorway_link': 60, 'secondary_link': 50,
 		# inferred
 		'road': 50, 'trunk_link': 60}
@@ -18,7 +18,7 @@ def buildRoadGraph(filename):
 		'residential': 20, 'primary_link': 20, 'tertiary': 40, 'trunk': 80, 'motorway': 120, 'trunk_link': 40,
 		'motorway_link': 60,
 		# inferred
-		'road': 20, 'access_ramp': 40, 'track': 20,  'pedestrian': 20, 'tertiary_link': 30, 'secondary_link': 50}
+		'road': 20, 'access_ramp': 40, 'track': 20, 'tertiary_link': 30, 'secondary_link': 50}
 	graph, edgeTable = __linkNodes(ET.parse(filename).getroot(), speeds)
 	return (graph.subgraph(max(nx.weakly_connected_components(graph), key=len)), edgeTable)
 
@@ -46,7 +46,7 @@ def __linkNodes(root, speeds):
 	edges = {}
 	invalid = ['footway','cycleway','path', 'steps', 'construction', 'raceway',
 	'proposed', 'planned', 'bridleway', 'bus_stop', 'elevator', 'services',
-	'platform','disused', 'no', 'rest_area', 'crossing']
+	'platform','disused', 'no', 'rest_area', 'crossing', 'pedestrian', 'service']
 	for way in root.findall('way'):
 		highway = False
 		for tag in way.findall('tag'):
