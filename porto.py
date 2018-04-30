@@ -7,46 +7,64 @@ import networkx as nx
 import json
 from streetMapParser import buildRoadGraph, snapToGraph
 from portugalTaxiParser import parseTrips
+from collections import defaultdict
 
 
-graph, edgeTable = buildRoadGraph('portoMap.xml')
-# print(nx.number_weakly_connected_components(graph))
-# print(len(graph.edges))
+
+# totalTypes = defaultdict(int)
+# i=0;
 # for c in nx.weakly_connected_components(graph):
-# 	print(len(graph.subgraph(c)))
-print("built")
-#Read in trips using:
-trips = {}
-with open("portoSnappedTrips.json", 'r') as f:
-	trips = json.loads(f.read())
-print("loaded")
-for tripID in trips:
-	path = []
-	prev = None
-	for nodeID in trips[tripID]:
-		print(nodeID in graph)
-		if prev:
-			path += nx.bidirectional_dijkstra(graph, prev, nodeID)[1]
-		prev = nodeID
-	print(path)
-	print(nx.bidirectional_dijkstra(graph, trips[tripID][0], trips[tripID][-1])[1])
-	print()
+# 	g = graph.subgraph(c)
+# 	nx.draw_networkx(g, {x:y[::-1] for x,y in g.nodes.data('loc')}, node_size=3, width=.1, arrowsize=2, with_labels=False, alpha=.7)
+# 	plt.ticklabel_format(useOffset=False)
+# 	plt.savefig(str(i)+"test.pdf")
+# 	i+=1
+# 	types = defaultdict(int)
+# 	for x in graph.subgraph(c).edges:
+# 		types[edgeTable[x[2]]['highway']] += 1
+# 		if edgeTable[x[2]]['highway']=='residential':
+# 			print(graph.nodes[x[1]]['loc'])
+# 	print(i)
+# 	print(types)
+# 	for k in types:
+# 		totalTypes[k] += types[k]
+# print(totalTypes)
 
-
-
-#
-# For resnapping
-#
-# trips = parseTrips('portoTaxi.csv')
-# print("parsed")
+#######################
+#Read in trips using: #
+#######################
 # graph, edgeTable = buildRoadGraph('portoMap.xml')
 # print("built")
-# trips, error = snapToGraph(trips, graph)
-# print("snapped")
-# with open("portoSnappedTrips.json", 'w') as f: # encode for later use
-# 	f.write(json.dumps(trips, indent=4))
-# print("wrote to file")
-# print(error)
+# trips = {}
+# with open("portoSnappedTrips.json", 'r') as f:
+# 	trips = json.loads(f.read())
+# print("loaded")
+# for tripID in trips:
+# 	path = []
+# 	prev = None
+# 	for nodeID in trips[tripID]:
+# 		if prev:
+# 			path += nx.bidirectional_dijkstra(graph, prev, nodeID)[1]
+# 		prev = nodeID
+# 	print(path)
+# 	print(nx.bidirectional_dijkstra(graph, trips[tripID][0], trips[tripID][-1])[1])
+# 	print()
+
+
+
+##################
+# For resnapping #
+##################
+trips = parseTrips('portoTaxi.csv')
+print("parsed")
+graph, edgeTable = buildRoadGraph('portoMap.xml')
+print("built")
+trips, error = snapToGraph(trips, graph)
+print("snapped")
+with open("portoSnappedTrips.json", 'w') as f: # encode for later use
+	f.write(json.dumps(trips, indent=4))
+print("wrote to file")
+print(error)
 
 
 
