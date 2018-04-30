@@ -19,7 +19,8 @@ def buildRoadGraph(filename):
 		'motorway_link': 60,
 		# inferred
 		'road': 20, 'access_ramp': 40, 'track': 20,  'pedestrian': 20, 'tertiary_link': 30, 'secondary_link': 50}
-	return __linkNodes(ET.parse(filename).getroot(), speeds)
+	graph, edgeTable = __linkNodes(ET.parse(filename).getroot(), speeds)
+	return (graph.subgraph(max(nx.weakly_connected_components(graph), key=len)), edgeTable)
 
 #################
 # Find highways #
