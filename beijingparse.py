@@ -3,60 +3,82 @@
 from xml.etree import ElementTree as ET
 import networkx as nx
 import matplotlib.pyplot as plt
+import pygraphviz as pgv
 import numpy as np
 
 np.set_printoptions(threshold=np.nan)
 
-# Initialize empty array
-full = []
-taxiID = []
-datetime = []
-longi = []
-lat = []
 
-# Loop through all Beijing Taxi .txt files line by line and pull info, number of .txt files hardcoded in for now
-for i in range(1,10358):
-	with open (str(i)+'.txt') as text:
-		text.readline()
-		for line in text:
-			full.append(line.strip().split(","))
-			taxiID.append(line.strip().split(",")[0])
-			datetime.append(line.strip().split(",")[1])
-			longi.append(line.strip().split(",")[2])
-			lat.append(line.strip().split(",")[3])
+def parseTrips(start,end):
+	# Initialize empty array
+	full = []
+	taxiID = []
+	datetime = []
+	longi = []
+	lat = []
 
-# Turn all arrays in numpy arays
-full = np.array(full)
-taxiID = np.array(taxiID)
-datetime = np.array(datetime)
-longi = np.array(longi)
-lat = np.array(lat)
+	# Loop through all Beijing Taxi .txt files line by line and pull info, number of .txt files hardcoded in for now
+	for i in range(start,end):
+		with open (str(i)+'.txt') as text:
+			text.readline()
+			for line in text:
+				#if longi[line] != 0 and lat[line] != 0:
+				full.append(line.strip().split(","))
+				taxiID.append(line.strip().split(",")[0])
+				datetime.append(line.strip().split(",")[1])
+				longi.append(line.strip().split(",")[2])
+				lat.append(line.strip().split(",")[3])
 
-# Coordinate matrix (longtiude, latitude)
-coord = np.column_stack((longi,lat))
+	# Turn all arrays in numpy arays
+	full = np.array(full)
+	taxiID = np.array(taxiID)
+	datetime = np.array(datetime)
+	longi = np.array(longi)
+	lat = np.array(lat)
 
-# Trip matrix (taxiID, longtiude, latitude)
-trips = np.column_stack((taxiID,coord))
-print(trips)
+	# Coordinate matrix (longtiude, latitude)
+	coord = np.column_stack((longi,lat))
+
+	# Trip matrix (taxiID, longtiude, latitude)
+	trips = np.column_stack((taxiID,coord))
+
+	# Create position dict
+	pos = {}
+	for i in range(0,len(coord)):
+		pos.update({i:(coord[i,0],coord[i,1])})
+
+	#print(trips)
+
+	# Return info
+	return (pos)
 
 ##############
 # Merge nodes with map data
 
 
 ##############
-# Plot each coordinate as a node in NetworkX, this looks really messy right now and will need to be updated
+# Plot each coordinate as a node, and then draw
 
-G = nx.MultiDiGraph()
-pos = {}
+# Initialize NetworkX 
+#G = nx.MultiDiGraph()
 
-# Create position dict
-for i in range(0,len(coord)):
-	pos.update({i:(coord[i,0],coord[i,1])})
+# Initialize PyGraphviz
+#G = pgv.AGraph()
+
 
 # Add nodes from dict
-G.add_nodes_from(pos.keys())
+#G.add_nodes_from(pos.keys())
 #G.add_edges_from([(0,1), (1,2), (2,3)])
 
+# Convert NetworkX to PyGraphviz 
+#G = nx.nx_agraph.to_agraph(G)
+
 # Draw and plot
-nx.draw(G, pos, with_labels=True)
-plt.show()
+
+
+#G.layout()
+#G.draw("test.ps")
+#nx.draw(G, pos, with_labels=True)
+#plt.show()
+
+
