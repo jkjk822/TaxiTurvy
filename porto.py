@@ -33,38 +33,59 @@ from collections import defaultdict
 #######################
 #Read in trips using: #
 #######################
-# graph, edgeTable = buildRoadGraph('portoMap.xml')
-# print("built")
-# trips = {}
-# with open("portoSnappedTrips.json", 'r') as f:
-# 	trips = json.loads(f.read())
-# print("loaded")
-# for tripID in trips:
-# 	path = []
-# 	prev = None
-# 	for nodeID in trips[tripID]:
-# 		if prev:
-# 			path += nx.bidirectional_dijkstra(graph, prev, nodeID)[1]
-# 		prev = nodeID
-# 	print(path)
-# 	print(nx.bidirectional_dijkstra(graph, trips[tripID][0], trips[tripID][-1])[1])
-# 	print()
-
+graph, edgeTable = buildRoadGraph('portoMap.xml')
+print("built")
+trips = {}
+with open("portoSnappedTrips.json", 'r') as f:
+	trips = json.loads(f.read())
+print("loaded")
+with open('expandedPaths.json', 'a') as f:
+	complete = ['1389898884620000048', '1379604446620000574', '1388548028620000074', '1391760659620000010']
+	done = len(complete)
+	for tripID in trips:
+		if(tripID in complete):
+			continue
+		path = []
+		trip = trips[tripID]
+		for i in range(len(trip)):
+			if i>0:
+				valid = False
+				nextSteps = []
+				j = i
+				while(not valid and i < len(trip)):
+					try:
+						d, nextSteps = nx.bidirectional_dijkstra(graph, trip[j-1], trip[i])
+						valid = True
+						if len(nextSteps)>10 and i+1 < len(trip):
+							d, nextNext = nx.bidirectional_dijkstra(graph, trip[j-1], trip[i+1])
+							if len(nextNext) < len(nextSteps):
+								nextSteps = nextNext
+								i+=1
+					except nx.exception.NetworkXNoPath:
+						i+=1
+				path += nextSteps
+		path = [n for i, n in enumerate(path) if i==0 or n != path[i-1]] #remove dupes
+		f.write(tripID+"\n")
+		f.write(json.dumps(path)+"\n")
+		f.write(json.dumps(nx.bidirectional_dijkstra(graph, trips[tripID][0], trips[tripID][-1])[1])+"\n")
+		f.write("\n")
+		done+=1
+		print(done)
 
 
 ##################
 # For resnapping #
 ##################
-trips = parseTrips('portoTaxi.csv')
-print("parsed")
-graph, edgeTable = buildRoadGraph('portoMap.xml')
-print("built")
-trips, error = snapToGraph(trips, graph)
-print("snapped")
-with open("portoSnappedTrips.json", 'w') as f: # encode for later use
-	f.write(json.dumps(trips, indent=4))
-print("wrote to file")
-print(error)
+# trips = parseTrips('portoTaxi.csv')
+# print("parsed")
+# graph, edgeTable = buildRoadGraph('portoMap.xml')
+# print("built")
+# trips, error = snapToGraph(trips, graph)
+# print("snapped")
+# with open("portoSnappedTrips.json", 'w') as f: # encode for later use
+# 	f.write(json.dumps(trips, indent=4))
+# print("wrote to file")
+# print(error)
 
 
 
