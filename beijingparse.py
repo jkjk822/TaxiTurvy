@@ -11,46 +11,57 @@ np.set_printoptions(threshold=np.nan)
 
 def parseTrips(start,end):
 	# Initialize empty array
-	full = []
-	taxiID = []
-	datetime = []
-	longi = []
-	lat = []
+	#full = []
+	#taxiID = []
+	#datetime = []
+	#longi = []
+	#lat = []
 
 	# Loop through all Beijing Taxi .txt files line by line and pull info, number of .txt files hardcoded in for now
-	for i in range(start,end):
-		with open (str(i)+'.txt') as text:
-			text.readline()
-			for line in text:
-				#if longi[line] != 0 and lat[line] != 0:
-				full.append(line.strip().split(","))
-				taxiID.append(line.strip().split(",")[0])
-				datetime.append(line.strip().split(",")[1])
-				longi.append(line.strip().split(",")[2])
-				lat.append(line.strip().split(",")[3])
+	#for i in range(start,end):
+	#	with open (str(i)+'.txt') as text:
+	#		text.readline()
+	#		for line in text:
+	#			#if longi[line] != 0 and lat[line] != 0:
+	#			full.append(line.strip().split(","))
+	#			taxiID.append(line.strip().split(",")[0])
+	#			datetime.append(line.strip().split(",")[1])
+	#			longi.append(line.strip().split(",")[2])
+	#			lat.append(line.strip().split(",")[3])
 
 	# Turn all arrays in numpy arays
-	full = np.array(full)
-	taxiID = np.array(taxiID)
-	datetime = np.array(datetime)
-	longi = np.array(longi)
-	lat = np.array(lat)
+	#full = np.array(full)
+	#taxiID = np.array(taxiID)
+	#datetime = np.array(datetime)
+	#longi = np.array(longi)
+	#lat = np.array(lat)
 
 	# Coordinate matrix (longtiude, latitude)
-	coord = np.column_stack((longi,lat))
+	#coord = np.column_stack((longi,lat))
 
 	# Trip matrix (taxiID, longtiude, latitude)
-	trips = np.column_stack((taxiID,coord))
+	#trips = np.column_stack((taxiID,coord))
 
 	# Create position dict
-	pos = {}
-	for i in range(0,len(coord)):
-		pos.update({i:(coord[i,0],coord[i,1])})
+	#pos = {}
+	#for i in range(0,len(coord)):
+	#	pos.update({i:(coord[i,0],coord[i,1])})
 
 	#print(trips)
 
+	pos = {}
+
+	for i in range(start,end):
+		with open (str(i)+'.txt') as text:
+			text.readline()
+			xy = []
+			for line in text:
+				xy.append((line.strip().split(",")[2],line.strip().split(",")[3]))
+			pos.update({str(i):xy})
+
+
 	# Return info
-	return (pos)
+	return pos
 
 ##############
 # Merge nodes with map data
