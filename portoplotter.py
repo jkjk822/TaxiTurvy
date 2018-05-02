@@ -19,9 +19,10 @@ for tripID in trips:
 		if prev:
 			path += nx.bidirectional_dijkstra(graph, prev, nodeID)[1]
 		prev = nodeID
-	#print(path)
-	#print(nx.bidirectional_dijkstra(graph, trips[tripID][0], trips[tripID][-1])[1])
+	print(path)
+	print(nx.bidirectional_dijkstra(graph, trips[tripID][0], trips[tripID][-1])[1])
 	print(nodeID)
 
 nx.draw(graph)
-save_graph(graph,"test.pdf")
+nx.write_gexf(trips, "porto.gexf")
+#save_graph(graph,"test.pdf")
