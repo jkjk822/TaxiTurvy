@@ -55,7 +55,7 @@ from collections import defaultdict
 ##################
 # For resnapping #
 ##################
-trips = parseTrips(1,5)
+trips = parseTrips(1,10358)
 print("parsed")
 graph, edgeTable = buildRoadGraph('beijingMap.xml')
 print("built")
