@@ -14,15 +14,14 @@ def parseTrips(start,end):
 	#full = []
 	#taxiID = []
 	#datetime = []
-	#longi = []
-	#lat = []
+	longi = []
+	lat = []
 
 	# Loop through all Beijing Taxi .txt files line by line and pull info, number of .txt files hardcoded in for now
 	#for i in range(start,end):
 	#	with open (str(i)+'.txt') as text:
 	#		text.readline()
 	#		for line in text:
-	#			#if longi[line] != 0 and lat[line] != 0:
 	#			full.append(line.strip().split(","))
 	#			taxiID.append(line.strip().split(",")[0])
 	#			datetime.append(line.strip().split(",")[1])
@@ -42,11 +41,6 @@ def parseTrips(start,end):
 	# Trip matrix (taxiID, longtiude, latitude)
 	#trips = np.column_stack((taxiID,coord))
 
-	# Create position dict
-	#pos = {}
-	#for i in range(0,len(coord)):
-	#	pos.update({i:(coord[i,0],coord[i,1])})
-
 	#print(trips)
 
 	pos = {}
@@ -57,11 +51,22 @@ def parseTrips(start,end):
 			xy = []
 			for line in text:
 				xy.append((line.strip().split(",")[2],line.strip().split(",")[3]))
+				longi.append(line.strip().split(",")[2])
+				lat.append(line.strip().split(",")[3])
 			pos.update({str(i):xy})
 
+	longi = np.array(longi)
+	lat = np.array(lat)
+	coord = np.column_stack((longi,lat))
+
+	# Create graph dict
+	vis = {}
+	for i in range(0,len(coord)):
+		vis.update({i:(coord[i,0],coord[i,1])})
 
 	# Return info
 	return pos
+	#return vis
 
 ##############
 # Merge nodes with map data
