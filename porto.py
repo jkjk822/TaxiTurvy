@@ -40,7 +40,12 @@ with open("portoSnappedTrips.json", 'r') as f:
 	trips = json.loads(f.read())
 print("loaded")
 with open('expandedPaths.json', 'a') as f:
-	complete = ['1389898884620000048', '1379604446620000574', '1388548028620000074', '1391760659620000010']
+	complete = ['1379604446620000574', '1388548028620000074', '1391760659620000010', '1375724022620000663', '1399572669620000506',
+	'1395130170620000024', '1395937013620000007', '1383449835620000472', '1384692749620000126', '1393958970620000648',
+	'1403853551620000286', '1378489645620000391', '1391779432620000074', '1399820029620000686', '1380375278620000383',
+	'1395655073620000480', '1403478070620000453', '1379712261620000904', '1392633621620000036', '1387654944620000465', 
+	'1379661410620000195', '1378976826620000353', '1397989762620000565', '1379609130620000605', '1378796683620000389', 
+	'1379781166620000343', '1387531512620000294']
 	done = len(complete)
 	for tripID in trips:
 		if(tripID in complete):
@@ -65,9 +70,11 @@ with open('expandedPaths.json', 'a') as f:
 						i+=1
 				path += nextSteps
 		path = [n for i, n in enumerate(path) if i==0 or n != path[i-1]] #remove dupes
+		if len(path)<2:
+			continue
 		f.write(tripID+"\n")
 		f.write(json.dumps(path)+"\n")
-		f.write(json.dumps(nx.bidirectional_dijkstra(graph, trips[tripID][0], trips[tripID][-1])[1])+"\n")
+		f.write(json.dumps(nx.bidirectional_dijkstra(graph, path[0], path[-1])[1])+"\n")
 		f.write("\n")
 		done+=1
 		print(done)
