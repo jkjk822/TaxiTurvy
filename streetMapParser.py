@@ -46,7 +46,7 @@ def __linkNodes(root, speeds):
 	edges = {}
 	invalid = ['footway','cycleway','path', 'steps', 'construction', 'raceway',
 	'proposed', 'planned', 'bridleway', 'bus_stop', 'elevator', 'services',
-	'platform','disused', 'no', 'rest_area', 'crossing', 'pedestrian', 'service']
+	'platform','disused', 'no', 'rest_area', 'crossing', 'pedestrian']
 	for way in root.findall('way'):
 		highway = False
 		for tag in way.findall('tag'):
@@ -66,7 +66,7 @@ def __linkNodes(root, speeds):
 def __findNodes(root):
 	nodes = {}
 	for node in root.findall('node'):
-		nodes[node.get('id')] = { "loc": (float(node.get('lat')), float(node.get('lon'))) }
+		nodes[node.get('id')] = { "loc": {0:float(node.get('lat')), 1:float(node.get('lon'))} }
 	return nodes
 
 
@@ -104,7 +104,7 @@ def __addToGraph(way, nodes, edges, speeds, graph):
 # Haversine
 def __distance(p1, p2):
 	a = np.sin((p1[0]-p2[0])/2)**2+np.cos(p1[0])*np.cos(p2[0])*np.sin((p1[1]-p2[1])/2)**2
-	return 2*6371*np.arctan((a/(1-a))**1/2)
+	return float(2*6371*np.arctan((a/(1-a))**1/2))
 
 
 # This is super computationally expensive, so watch out
